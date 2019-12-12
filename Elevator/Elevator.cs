@@ -11,13 +11,25 @@ namespace Elevator
         Down
     }
 
+
+    /*
+     * In a building with many floors, the computer has to have some sort of strategy to keep 
+     * the cars running as efficiently as possible. In older systems, the strategy is to avoid 
+     * reversing the elevator's direction. That is, an elevator car will keep moving up as long 
+     * as there are people on the floors above that want to go up. The car will only answer 
+     * "down calls" after it has taken care of all the "up calls." But once it starts down, it 
+     * won't pick up anybody who wants to go up until there are no more down calls on lower 
+     *
+     * https://science.howstuffworks.com/transport/engines-equipment/elevator7.htm
+    */
     public class Elevator
     {
-        public List<int> History { get; }
         public int Floor { get; private set; }
         public Direction Direction { get; private set; }
 
-        public List<int> RequestedFloors { get; set; }
+        public List<int> PressedButtons { get; set; } 
+
+        public List<int> PressedButtonsHistory { get; }
 
         #region Constructors...
 
@@ -25,8 +37,8 @@ namespace Elevator
         {
             Debug.WriteLine("Elevator Created");
             this.Direction = Direction.None;
-            this.History = new List<int>();
-            this.RequestedFloors = new List<int>();
+            this.PressedButtonsHistory = new List<int>();
+            this.PressedButtons = new List<int>();
             this.SetFloor(floor);
         }
 
@@ -37,7 +49,7 @@ namespace Elevator
             Debug.WriteLine($"Moved to floor {floor}");
 
             this.Floor = floor;
-            this.History.Add(floor);
+            this.PressedButtonsHistory.Add(floor);
         }
 
         public void PressButton(int number)
@@ -47,17 +59,17 @@ namespace Elevator
                 return; // KEEP THE DOOR OPEN!
             }
 
-            if (this.RequestedFloors.Contains(number))
+            if (this.PressedButtons.Contains(number))
             {
                 return; // Stop pressing the same button.
             }
 
-            this.RequestedFloors.Add(number);
+            this.PressedButtons.Add(number);
         }
 
         public bool HasSomewhereToGo()
         {
-            return (this.RequestedFloors.Count > 0);
+            return (this.PressedButtons.Count > 0);
         }
 
         public void Move()
@@ -70,7 +82,7 @@ namespace Elevator
             // Work out the start direction
             if (this.Direction == Direction.None)
             {
-                if (this.Floor > this.RequestedFloors[0])
+                if (this.Floor > this.PressedButtons[0])
                 {
                     this.Direction = Direction.Down;
                 }
@@ -81,14 +93,14 @@ namespace Elevator
             } 
             else if (this.Direction == Direction.Up)
             {
-                if (this.RequestedFloors.Where(x => x > this.Floor).Count() == 0)
+                if (this.PressedButtons.Where(x => x > this.Floor).Count() == 0)
                 {
                     this.Direction = Direction.Down;                
                 }
             }
             else if (this.Direction == Direction.Down)
             {
-                if (this.RequestedFloors.Where(x => x < this.Floor).Count() == 0)
+                if (this.PressedButtons.Where(x => x < this.Floor).Count() == 0)
                 {
                     this.Direction = Direction.Up;
                 }
@@ -98,15 +110,15 @@ namespace Elevator
             int? nextFloor = null;
             if (this.Direction == Direction.Up)
             {
-                nextFloor = this.RequestedFloors.Where(x => x > this.Floor).OrderBy(x => x).FirstOrDefault();
+                nextFloor = this.PressedButtons.Where(x => x > this.Floor).OrderBy(x => x).FirstOrDefault();
             }
 
             if (this.Direction == Direction.Down)
             {
-                nextFloor = this.RequestedFloors.Where(x => x < this.Floor).OrderByDescending(x => x).FirstOrDefault();
+                nextFloor = this.PressedButtons.Where(x => x < this.Floor).OrderByDescending(x => x).FirstOrDefault();
             }
 
-            this.RequestedFloors.Remove(nextFloor.Value);
+            this.PressedButtons.Remove(nextFloor.Value);
             this.SetFloor(nextFloor.Value);
         }
     }
