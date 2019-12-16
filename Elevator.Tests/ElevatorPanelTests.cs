@@ -10,7 +10,20 @@ namespace Elevator
     public class ElevatorPanelTests
     {
         [TestMethod]
-        public void ElevatorWillMoveUp()
+        public void ElevatorHasNothingToDo()
+        {
+            // Arrange
+            var elevator = new Elevator(1);
+
+            // Act
+            elevator.Move();
+
+            // Assert
+            CollectionAssert.AreEqual(new List<int>() { 1 }, elevator.FloorHistory);
+        }
+
+        [TestMethod]
+        public void ElevatorGoesUp()
         {
             // Arrange
             var elevator = new Elevator(1);
@@ -24,7 +37,7 @@ namespace Elevator
         }
 
         [TestMethod]
-        public void ElevatorWillMoveDown()
+        public void ElevatorGoesDown()
         {
             // Arrange
             var elevator = new Elevator(4);
@@ -36,6 +49,27 @@ namespace Elevator
             // Assert
             CollectionAssert.AreEqual(new List<int>() { 4, 1 }, elevator.FloorHistory);
         }
+
+        [TestMethod]
+        public void IgnoreMultiplePresses()
+        {
+            // Arrange
+            var elevator = new Elevator(1);
+
+            elevator.PressButton(4);
+            elevator.PressButton(4);
+            elevator.PressButton(4);
+            elevator.PressButton(4);
+            elevator.PressButton(4);
+            elevator.Move();
+            
+            // Act
+            elevator.Move();
+
+            // Assert
+            CollectionAssert.AreEqual(new List<int>() { 1, 4 }, elevator.FloorHistory);
+        }
+
 
         /*
          * The Elevator is at level 1.
@@ -58,9 +92,9 @@ namespace Elevator
 
             elevator.PressButton(2);
             elevator.PressButton(8);
-            elevator.Move();
 
             // Act
+            elevator.Move(); // It should continue up.
             elevator.Move(); // This move it should be heading down.
 
             // Assert

@@ -64,6 +64,9 @@ namespace Elevator
             this.FloorHistory.Add(floor);
         }
 
+        /// <summary>
+        /// Someone presses a button in the elevator.
+        /// </summary>
         public void PressButton(int floor)
         {
             if (this.Floor == floor)
@@ -79,6 +82,10 @@ namespace Elevator
             this.PressedButtons.Add(new ButtonPress(floor));
         }
 
+
+        /// <summary>
+        /// Someone presses a button on one of the floors.
+        /// </summary>
         public void PressFloorButton(int floor, Direction direction)
         {
             if (this.Floor == floor)
@@ -94,7 +101,7 @@ namespace Elevator
             this.PressedButtons.Add(new ButtonPress(floor, direction));
         }
 
-        public bool HasSomewhereToGo()
+        private bool HasSomewhereToGo()
         {
             return (this.PressedButtons.Count > 0);
         }

@@ -41,6 +41,25 @@ namespace Elevator
             CollectionAssert.AreEqual(new List<int>() { 8, 1 }, elevator.FloorHistory);
         }
 
+        [TestMethod]
+        public void IgnoreMultipleFloorPresses()
+        {
+            // Arrange
+            var elevator = new Elevator(1);
+
+            elevator.PressFloorButton(4, Direction.Down);
+            elevator.PressFloorButton(4, Direction.Down);
+            elevator.PressFloorButton(4, Direction.Down);
+            elevator.PressFloorButton(4, Direction.Down);
+            elevator.Move();
+
+            // Act
+            elevator.Move();
+
+            // Assert
+            CollectionAssert.AreEqual(new List<int>() { 1, 4 }, elevator.FloorHistory);
+        }
+
         // Someone on level 1 presses the button for level 8.
         // Someone on the 4th floor presses the button to go up.
         // The elevator should pick them up on the way through.
@@ -51,7 +70,7 @@ namespace Elevator
             var elevator = new Elevator(1);
 
             // Act
-            elevator.PressFloorButton(8, Direction.None);
+            elevator.PressButton(8);
             elevator.PressFloorButton(4, Direction.Up);
             elevator.Move();
             elevator.Move();
@@ -70,7 +89,7 @@ namespace Elevator
             var elevator = new Elevator(1);
 
             // Act
-            elevator.PressFloorButton(8, Direction.None);
+            elevator.PressButton(8);
             elevator.PressFloorButton(4, Direction.Down);
             elevator.Move();
             elevator.Move();
