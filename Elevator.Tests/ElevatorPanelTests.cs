@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Elevator
 {
+    /// <summary>
+    /// Tests the simple scenarios which only involve people pressing buttons inside the elevator.
+    /// </summary>
     [TestClass]
     public class ElevatorPanelTests
     {
@@ -41,7 +44,7 @@ namespace Elevator
          * Bill gets on and presses the button 2.
          * Mark gets on and presses the button 8.
          * 
-         * The elevator should go all the way up to the 6th floor, then change direction and come
+         * The elevator should go all the way up to the 8th floor, then change direction and come
          * back down.
         */
         [TestMethod]

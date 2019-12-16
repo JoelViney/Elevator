@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -35,16 +34,6 @@ namespace Elevator
         }
     }
 
-    /*
-     * In a building with many floors, the computer has to have some sort of strategy to keep 
-     * the cars running as efficiently as possible. In older systems, the strategy is to avoid 
-     * reversing the elevator's direction. That is, an elevator car will keep moving up as long 
-     * as there are people on the floors above that want to go up. The car will only answer 
-     * "down calls" after it has taken care of all the "up calls." But once it starts down, it 
-     * won't pick up anybody who wants to go up until there are no more down calls on lower 
-     *
-     * https://science.howstuffworks.com/transport/engines-equipment/elevator7.htm
-    */
     public class Elevator
     {
         public int Floor { get; private set; }
@@ -149,11 +138,21 @@ namespace Elevator
             if (this.Direction == Direction.Up)
             {
                 nextButton = this.PressedButtons.Where(x => x.Floor > this.Floor && (x.Direction == Direction.Up || x.Direction == Direction.None)).OrderBy(x => x.Floor).FirstOrDefault();
+
+                if (nextButton == null)
+                {   // Someone has requested the elevator and it has to go the opposite direction
+                    nextButton = this.PressedButtons.First();
+                }
             }
 
             if (this.Direction == Direction.Down)
             {
                 nextButton = this.PressedButtons.Where(x => x.Floor < this.Floor && (x.Direction == Direction.Down || x.Direction == Direction.None)).OrderByDescending(x => x.Floor).FirstOrDefault();
+
+                if (nextButton == null)
+                {   // Someone has requested the elevator and it has to go the opposite direction
+                    nextButton = this.PressedButtons.First();
+                }
             }
 
             this.PressedButtons.Remove(nextButton);
