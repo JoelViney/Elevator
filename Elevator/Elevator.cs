@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -11,6 +12,28 @@ namespace Elevator
         Down
     }
 
+    /// <summary>
+    /// A button press is from inside the elevator which has a direction of none.
+    /// Or from a floor outside the eleveator which has a direction indicating up or down.
+    /// </summary>
+    public class ButtonPress
+    { 
+        public int Floor { get; }
+
+        public Direction Direction { get; }
+
+        public ButtonPress(int floor)
+        {
+            this.Floor = floor;
+            this.Direction = Direction.None;
+        }
+
+        public ButtonPress(int floor, Direction direction)
+        {
+            this.Floor = floor;
+            this.Direction = direction;
+        }
+    }
 
     /*
      * In a building with many floors, the computer has to have some sort of strategy to keep 
@@ -27,9 +50,9 @@ namespace Elevator
         public int Floor { get; private set; }
         public Direction Direction { get; private set; }
 
-        public List<int> PressedButtons { get; set; } 
+        public List<ButtonPress> PressedButtons { get; } 
 
-        public List<int> PressedButtonsHistory { get; }
+        public List<int> FloorHistory { get; }
 
         #region Constructors...
 
@@ -37,8 +60,8 @@ namespace Elevator
         {
             Debug.WriteLine("Elevator Created");
             this.Direction = Direction.None;
-            this.PressedButtonsHistory = new List<int>();
-            this.PressedButtons = new List<int>();
+            this.FloorHistory = new List<int>();
+            this.PressedButtons = new List<ButtonPress>();
             this.SetFloor(floor);
         }
 
@@ -49,22 +72,37 @@ namespace Elevator
             Debug.WriteLine($"Moved to floor {floor}");
 
             this.Floor = floor;
-            this.PressedButtonsHistory.Add(floor);
+            this.FloorHistory.Add(floor);
         }
 
-        public void PressButton(int number)
+        public void PressButton(int floor)
         {
-            if (this.Floor == number)
+            if (this.Floor == floor)
             {
                 return; // KEEP THE DOOR OPEN!
             }
 
-            if (this.PressedButtons.Contains(number))
+            if (this.PressedButtons.Any(x => x.Floor == floor && x.Direction == Direction.None))
             {
                 return; // Stop pressing the same button.
             }
 
-            this.PressedButtons.Add(number);
+            this.PressedButtons.Add(new ButtonPress(floor));
+        }
+
+        public void PressFloorButton(int floor, Direction direction)
+        {
+            if (this.Floor == floor)
+            {
+                return; // KEEP THE DOOR OPEN
+            }
+
+            if (this.PressedButtons.Any(x => x.Floor == floor && x.Direction == direction))
+            {
+                return; // Stop pressing the same button.
+            }
+
+            this.PressedButtons.Add(new ButtonPress(floor, direction));
         }
 
         public bool HasSomewhereToGo()
@@ -82,7 +120,7 @@ namespace Elevator
             // Work out the start direction
             if (this.Direction == Direction.None)
             {
-                if (this.Floor > this.PressedButtons[0])
+                if (this.Floor > this.PressedButtons[0].Floor)
                 {
                     this.Direction = Direction.Down;
                 }
@@ -93,33 +131,33 @@ namespace Elevator
             } 
             else if (this.Direction == Direction.Up)
             {
-                if (this.PressedButtons.Where(x => x > this.Floor).Count() == 0)
+                if (!this.PressedButtons.Any(x => x.Floor > this.Floor && (x.Direction == Direction.Up || x.Direction == Direction.None)))
                 {
                     this.Direction = Direction.Down;                
                 }
             }
             else if (this.Direction == Direction.Down)
             {
-                if (this.PressedButtons.Where(x => x < this.Floor).Count() == 0)
+                if (!this.PressedButtons.Any(x => x.Floor < this.Floor && (x.Direction == Direction.Down || x.Direction == Direction.None)))
                 {
                     this.Direction = Direction.Up;
                 }
             }
 
             // Find the next floor 
-            int? nextFloor = null;
+            ButtonPress nextButton = null;
             if (this.Direction == Direction.Up)
             {
-                nextFloor = this.PressedButtons.Where(x => x > this.Floor).OrderBy(x => x).FirstOrDefault();
+                nextButton = this.PressedButtons.Where(x => x.Floor > this.Floor && (x.Direction == Direction.Up || x.Direction == Direction.None)).OrderBy(x => x.Floor).FirstOrDefault();
             }
 
             if (this.Direction == Direction.Down)
             {
-                nextFloor = this.PressedButtons.Where(x => x < this.Floor).OrderByDescending(x => x).FirstOrDefault();
+                nextButton = this.PressedButtons.Where(x => x.Floor < this.Floor && (x.Direction == Direction.Down || x.Direction == Direction.None)).OrderByDescending(x => x.Floor).FirstOrDefault();
             }
 
-            this.PressedButtons.Remove(nextFloor.Value);
-            this.SetFloor(nextFloor.Value);
+            this.PressedButtons.Remove(nextButton);
+            this.SetFloor(nextButton.Floor);
         }
     }
 }

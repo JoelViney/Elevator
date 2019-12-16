@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Elevator
 {
     [TestClass]
-    public class ElevatorLogicTests
+    public class ElevatorPanelTests
     {
         [TestMethod]
         public void ElevatorWillMoveUp()
@@ -17,7 +17,7 @@ namespace Elevator
             elevator.Move();
 
             // Assert
-            CollectionAssert.AreEqual(new List<int>() { 1, 4 }, elevator.PressedButtonsHistory);
+            CollectionAssert.AreEqual(new List<int>() { 1, 4 }, elevator.FloorHistory);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace Elevator
             elevator.Move();
 
             // Assert
-            CollectionAssert.AreEqual(new List<int>() { 4, 1 }, elevator.PressedButtonsHistory);
+            CollectionAssert.AreEqual(new List<int>() { 4, 1 }, elevator.FloorHistory);
         }
 
         /*
@@ -62,7 +62,7 @@ namespace Elevator
 
             // Assert
             Assert.AreEqual(Direction.Down, elevator.Direction);
-            CollectionAssert.AreEqual(new List<int>() {1, 4, 8, 2}, elevator.PressedButtonsHistory);
+            CollectionAssert.AreEqual(new List<int>() {1, 4, 8, 2}, elevator.FloorHistory);
         }
     }
 }
