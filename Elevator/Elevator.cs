@@ -45,6 +45,7 @@ namespace Elevator
 
         #region Constructors...
 
+        /// <param name="floor">This is the floor that the eleveator starts at when initialised.</param>
         public Elevator(int floor = 1)
         {
             Debug.WriteLine("Elevator Created");
