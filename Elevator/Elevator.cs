@@ -12,7 +12,7 @@ namespace Elevator
     }
 
     /// <summary>
-    /// A button press is from inside the elevator which has a direction of none.
+    /// A button press is from inside the elevator which has a direction of none (but it does specify the destination floor).
     /// Or from a floor outside the eleveator which has a direction indicating up or down.
     /// </summary>
     public class ButtonPress
