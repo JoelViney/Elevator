@@ -9,13 +9,7 @@ namespace Elevator
     /// </summary>
     [TestClass]
     public class FloorButtonTests
-    {
-        [TestMethod]
-        public void FailingTestForActions()
-        {
-            throw new NotImplementedException();
-        }
-        
+    {        
         // The elevator is on level 1. 
         // Someone on the 8th Floor presses a button.
         [TestMethod]
