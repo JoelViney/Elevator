@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 
 namespace Elevator
@@ -9,6 +10,12 @@ namespace Elevator
     [TestClass]
     public class FloorButtonTests
     {
+        [TestMethod]
+        public void FailingTestForActions()
+        {
+            throw new NotImplementedException();
+        }
+        
         // The elevator is on level 1. 
         // Someone on the 8th Floor presses a button.
         [TestMethod]
