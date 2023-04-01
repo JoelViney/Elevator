@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 
 namespace Elevator
 {
@@ -72,7 +70,7 @@ namespace Elevator
         {
             if (this.Floor == floor)
             {
-                return; // KEEP THE DOOR OPEN!
+                return; // Hold the door
             }
 
             if (this.PressedButtons.Any(x => x.Floor == floor && x.Direction == Direction.None))
@@ -142,7 +140,7 @@ namespace Elevator
             }
 
             // Find the next floor 
-            ButtonPress nextButton = null;
+            ButtonPress? nextButton = null;
             if (this.Direction == Direction.Up)
             {
                 nextButton = this.PressedButtons.Where(x => x.Floor > this.Floor && (x.Direction == Direction.Up || x.Direction == Direction.None)).OrderBy(x => x.Floor).FirstOrDefault();
@@ -152,8 +150,7 @@ namespace Elevator
                     nextButton = this.PressedButtons.First();
                 }
             }
-
-            if (this.Direction == Direction.Down)
+            else // if (this.Direction == Direction.Down)
             {
                 nextButton = this.PressedButtons.Where(x => x.Floor < this.Floor && (x.Direction == Direction.Down || x.Direction == Direction.None)).OrderByDescending(x => x.Floor).FirstOrDefault();
 
