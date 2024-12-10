@@ -48,8 +48,8 @@ namespace Elevator
         {
             Debug.WriteLine("Elevator Created");
             this.Direction = Direction.None;
-            this.FloorHistory = new List<int>();
-            this.PressedButtons = new List<ButtonPress>();
+            this.FloorHistory = [];
+            this.PressedButtons = [];
             this.SetFloor(floor);
         }
 
@@ -145,19 +145,15 @@ namespace Elevator
             {
                 nextButton = this.PressedButtons.Where(x => x.Floor > this.Floor && (x.Direction == Direction.Up || x.Direction == Direction.None)).OrderBy(x => x.Floor).FirstOrDefault();
 
-                if (nextButton == null)
-                {   // Someone has requested the elevator and it has to go the opposite direction
-                    nextButton = this.PressedButtons.First();
-                }
+                // Someone has requested the elevator and it has to go the opposite direction
+                nextButton ??= this.PressedButtons.First();
             }
             else // if (this.Direction == Direction.Down)
             {
                 nextButton = this.PressedButtons.Where(x => x.Floor < this.Floor && (x.Direction == Direction.Down || x.Direction == Direction.None)).OrderByDescending(x => x.Floor).FirstOrDefault();
 
-                if (nextButton == null)
-                {   // Someone has requested the elevator and it has to go the opposite direction
-                    nextButton = this.PressedButtons.First();
-                }
+                // Someone has requested the elevator and it has to go the opposite direction
+                nextButton ??= this.PressedButtons.First();
             }
 
             this.PressedButtons.Remove(nextButton);
